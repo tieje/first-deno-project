@@ -3,11 +3,9 @@
 /** @jsx h */
 import { h } from "preact";
 import { Handlers, PageProps } from "$fresh/server.ts";
-
-const NAMES = ["Alice", "Bob", "Charlie", "Dave", "Eve", "Frank"];
-
+import NAMES from "../static/data.json" assert {type: "json"}
 interface Data {
-  results: string[];
+  results: { name: string; }[];
   query: string;
 }
 
@@ -15,7 +13,7 @@ export const handler: Handlers<Data> = {
   GET(req, ctx) {
     const url = new URL(req.url);
     const query = url.searchParams.get("q") || "";
-    const results = NAMES.filter((name) => name.includes(query));
+    const results = NAMES.filter((name) => name.name.includes(query));
     return ctx.render({ results, query });
   },
 };
@@ -29,7 +27,7 @@ export default function Page({ data }: PageProps<Data>) {
         <button type="submit">Search</button>
       </form>
       <ul>
-        {results.map((name) => <li key={name}>{name}</li>)}
+        {results.map((name) => <li key={name.name}>{name.name}</li>)}
       </ul>
     </div>
   );
